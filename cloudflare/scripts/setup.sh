@@ -49,7 +49,7 @@ extract_kv_id() {
 
 # Create CACHE namespace
 echo "Creating CACHE namespace..."
-CACHE_OUTPUT=$(wrangler kv:namespace create "CACHE" 2>&1)
+CACHE_OUTPUT=$(wrangler kv namespace create CACHE 2>&1)
 CACHE_ID=$(extract_kv_id "$CACHE_OUTPUT")
 
 if [ -z "$CACHE_ID" ]; then
@@ -62,7 +62,7 @@ echo "✅ Created CACHE namespace with ID: $CACHE_ID"
 
 # Create RATE_LIMIT namespace
 echo "Creating RATE_LIMIT namespace..."
-RATE_LIMIT_OUTPUT=$(wrangler kv:namespace create "RATE_LIMIT" 2>&1)
+RATE_LIMIT_OUTPUT=$(wrangler kv namespace create RATE_LIMIT 2>&1)
 RATE_LIMIT_ID=$(extract_kv_id "$RATE_LIMIT_OUTPUT")
 
 if [ -z "$RATE_LIMIT_ID" ]; then

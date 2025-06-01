@@ -6,8 +6,8 @@ main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
 # KV Namespaces - Replace with your actual IDs from:
-# wrangler kv:namespace create "CACHE"
-# wrangler kv:namespace create "RATE_LIMIT"
+# wrangler kv namespace create CACHE
+# wrangler kv namespace create RATE_LIMIT
 
 [[kv_namespaces]]
 binding = "CACHE"

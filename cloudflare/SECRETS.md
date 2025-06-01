@@ -51,8 +51,8 @@ If you prefer to configure manually:
 
 2. Create KV namespaces:
    ```bash
-   wrangler kv:namespace create "CACHE"
-   wrangler kv:namespace create "RATE_LIMIT"
+   wrangler kv namespace create CACHE
+   wrangler kv namespace create RATE_LIMIT
    ```
 
 3. Update `wrangler.toml` with the IDs from step 2
@@ -116,7 +116,7 @@ To rotate KV namespace IDs:
 
 1. Create new namespaces:
    ```bash
-   wrangler kv:namespace create "CACHE_NEW"
+   wrangler kv namespace create CACHE_NEW
    ```
 
 2. Update `wrangler.toml` with new IDs
@@ -125,7 +125,7 @@ To rotate KV namespace IDs:
 
 4. Delete old namespaces:
    ```bash
-   wrangler kv:namespace delete --namespace-id=OLD_ID
+   wrangler kv namespace delete --namespace-id=OLD_ID
    ```
 
 ## Security Checklist
@@ -145,7 +145,7 @@ If you lose your namespace IDs:
 2. List namespaces in Cloudflare dashboard
 3. Use Wrangler to list:
    ```bash
-   wrangler kv:namespace list
+   wrangler kv namespace list
    ```
 
 ## Best Practices

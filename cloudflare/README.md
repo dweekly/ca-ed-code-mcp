@@ -50,8 +50,8 @@ wrangler login
 
 3. Create KV namespaces:
 ```bash
-wrangler kv:namespace create "CACHE"
-wrangler kv:namespace create "RATE_LIMIT"
+wrangler kv namespace create CACHE
+wrangler kv namespace create RATE_LIMIT
 ```
 
 4. Update `wrangler.toml` with the KV namespace IDs from the output above.
