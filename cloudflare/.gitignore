@@ -5,10 +5,16 @@ node_modules/
 dist/
 .wrangler/
 
-# Environment files
+# Environment and secrets
 .env
-.env.local
+.env.*
 .dev.vars
+wrangler.toml
+!wrangler.toml.example
+
+# KV namespace IDs
+kv-namespaces.json
+.secrets/
 
 # Logs
 *.log

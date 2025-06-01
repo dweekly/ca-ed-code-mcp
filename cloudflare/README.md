@@ -19,12 +19,28 @@ This is the Cloudflare Workers implementation of the CA Education Code MCP serve
 - Cloudflare account
 - Wrangler CLI (`npm install -g wrangler`)
 
-### Installation
+### Quick Setup (Recommended)
 
-1. Navigate to the cloudflare directory:
+Use the automated setup script for proper secrets management:
+
 ```bash
 cd cloudflare
+./scripts/setup.sh
 npm install
+```
+
+This script will:
+- Create KV namespaces in your Cloudflare account
+- Generate a properly configured `wrangler.toml` (git-ignored)
+- Save namespace IDs securely
+
+### Manual Setup
+
+If you prefer manual configuration:
+
+1. Copy the template:
+```bash
+cp wrangler.toml.example wrangler.toml
 ```
 
 2. Login to Cloudflare:
@@ -39,6 +55,8 @@ wrangler kv:namespace create "RATE_LIMIT"
 ```
 
 4. Update `wrangler.toml` with the KV namespace IDs from the output above.
+
+⚠️ **Important**: Never commit `wrangler.toml` with real IDs to git!
 
 ### Development
 
@@ -104,6 +122,28 @@ Run type checking:
 ```bash
 npm run typecheck
 ```
+
+## Security
+
+This project implements several security measures:
+
+### Secrets Management
+- **Never commit** `wrangler.toml` with real namespace IDs
+- Use the provided setup script for automatic configuration
+- All sensitive files are git-ignored
+- See [SECRETS.md](SECRETS.md) for detailed security practices
+
+### Pre-commit Hook (Optional)
+Install the pre-commit hook to prevent accidental secret commits:
+```bash
+cp scripts/pre-commit.sh ../.git/hooks/pre-commit
+```
+
+### Best Practices
+- Use environment-specific configurations
+- Rotate namespace IDs periodically
+- Monitor access logs in Cloudflare dashboard
+- Keep dependencies updated
 
 ## Monitoring
 
