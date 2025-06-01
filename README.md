@@ -16,12 +16,9 @@ This MCP server enables AI models to retrieve California Education Code sections
 
 ## Installation
 
-### Prerequisites
+See [LOCAL_DEPLOYMENT.md](LOCAL_DEPLOYMENT.md) for detailed setup instructions with Claude Desktop.
 
-- Python 3.11 or higher
-- Git
-
-### Setup
+### Quick Start
 
 1. Clone the repository:
 ```bash
@@ -39,6 +36,8 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+
+4. Configure in Claude Desktop (see [LOCAL_DEPLOYMENT.md](LOCAL_DEPLOYMENT.md) for details)
 
 ## Usage
 
