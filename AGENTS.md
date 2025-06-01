@@ -25,6 +25,13 @@ The CA Ed Code MCP Server provides a Model Context Protocol interface for fetchi
 
 ## Development Workflow
 
+### Scratch Files and Testing
+- **NEVER** name test files with "final" in the name
+- **ALWAYS** use a `temp/` directory for scratch files and test scripts
+- The `temp/` directory must be in `.gitignore`
+- **ALWAYS** clean up scratch files before committing
+- Test scripts should be used for validation but not committed
+
 ### Phase 1: Project Setup
 1. Initialize git repository
 2. Create project structure

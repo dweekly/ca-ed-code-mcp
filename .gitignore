@@ -155,3 +155,4 @@ Thumbs.db
 .cache/
 *.cache
 TODO.md
+temp/
