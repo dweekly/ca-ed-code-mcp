@@ -1,0 +1,32 @@
+{
+  "name": "ca-ed-code-mcp-cloudflare",
+  "version": "0.1.0",
+  "description": "CA Education Code MCP Server for Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest",
+    "test:ci": "vitest run",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["mcp", "cloudflare-workers", "california", "education-code"],
+  "author": "dweekly",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1",
+    "wrangler": "^3.78.2"
+  },
+  "dependencies": {
+    "node-html-parser": "^6.1.12"
+  }
+}
