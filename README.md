@@ -39,9 +39,50 @@ pip install -r requirements.txt
 
 4. Configure in Claude Desktop (see [LOCAL_DEPLOYMENT.md](LOCAL_DEPLOYMENT.md) for details)
 
+## Deployment Options
+
+### 1. Cloudflare Workers (Remote) - LIVE! 🚀
+
+The server is publicly available at:
+```
+https://ca-ed-code-mcp.david-5bf.workers.dev/sse
+```
+
+Add to Claude Desktop:
+```json
+{
+  "mcpServers": {
+    "ca-ed-code": {
+      "transport": "sse",
+      "url": "https://ca-ed-code-mcp.david-5bf.workers.dev/sse"
+    }
+  }
+}
+```
+
+### 2. Local Deployment
+
+See [LOCAL_DEPLOYMENT.md](LOCAL_DEPLOYMENT.md) for running your own instance.
+
 ## Usage
 
-### Starting the Server
+### With Claude Desktop
+
+1. Add the server configuration (see above)
+2. Restart Claude Desktop
+3. Ask Claude: "Can you fetch California Education Code section 15278?"
+
+### API Examples
+
+Fetch Ed Code section:
+```bash
+curl -X POST https://ca-ed-code-mcp.david-5bf.workers.dev/sse \
+  -H "Accept: text/event-stream" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"fetch_ed_code","arguments":{"section":"15278"}}}'
+```
+
+### Starting the Server (Local)
 
 ```bash
 python -m ca_ed_code_mcp.server
