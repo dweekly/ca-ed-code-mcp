@@ -141,18 +141,14 @@ export class MCPServer {
           };
         }
 
+        // Add fetch timestamp
+        result.fetchedAt = new Date().toISOString();
+
         // Cache the result
         await this.cache.set(section, result);
       }
 
-      // Format response
-      let responseText = `California Education Code Section ${result.section}\n`;
-      if (result.title !== `Education Code Section ${result.section}`) {
-        responseText += `Title: ${result.title}\n`;
-      }
-      responseText += `URL: ${result.url}\n\n`;
-      responseText += result.content;
-
+      // Return structured response
       return {
         jsonrpc: '2.0',
         id: request.id,
@@ -160,9 +156,14 @@ export class MCPServer {
           content: [
             {
               type: 'text',
-              text: responseText
+              text: result.content
             }
-          ]
+          ],
+          // Additional structured metadata
+          section: result.section,
+          title: result.title,
+          url: result.url,
+          fetchedAt: result.fetchedAt || 'cached'
         }
       };
     } catch (error) {

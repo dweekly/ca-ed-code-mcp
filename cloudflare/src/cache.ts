@@ -35,8 +35,8 @@ export class Cache {
       }
 
       // Return the section data
-      const { section: sec, title, content, url } = cached;
-      return { section: sec, title, content, url };
+      const { section: sec, title, content, url, fetchedAt } = cached;
+      return { section: sec, title, content, url, fetchedAt };
     } catch (error) {
       console.error('Cache get error:', error);
       return null;

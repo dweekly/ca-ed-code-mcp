@@ -17,6 +17,7 @@ export interface EdCodeSection {
   title: string;
   content: string;
   url: string;
+  fetchedAt?: string; // ISO timestamp when fetched from origin
 }
 
 export interface CacheEntry extends EdCodeSection {

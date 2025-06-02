@@ -82,8 +82,8 @@ export class EdCodeParser {
       return '';
     }
 
-    // Extract content starting from section number
-    let content = text.substring(match.index);
+    // Extract content starting AFTER the section number and period
+    let content = text.substring(match.index + match[0].length).trim();
     
     // Find where it ends (look for amendment citations)
     const endPatterns = [
