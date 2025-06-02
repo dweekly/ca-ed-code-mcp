@@ -163,7 +163,7 @@ export class MCPServer {
           section: result.section,
           title: result.title,
           url: result.url,
-          fetchedAt: result.fetchedAt || 'cached'
+          fetchedAt: result.fetchedAt || new Date().toISOString()
         }
       };
     } catch (error) {
