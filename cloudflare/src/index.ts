@@ -1,5 +1,5 @@
 /**
- * CA Ed Code MCP Server - Cloudflare Workers Entry Point
+ * CA Ed Code MCP Server - Cloudflare Workers Entry Point (Fixed)
  */
 
 import { Env, MCPRequest } from './types';
@@ -14,17 +14,6 @@ export default {
     if (url.pathname !== '/sse') {
       return new Response('CA Ed Code MCP Server - Use /sse endpoint for MCP protocol', {
         status: 200,
-        headers: {
-          'Content-Type': 'text/plain',
-        }
-      });
-    }
-
-    // Check if SSE is requested
-    const acceptHeader = request.headers.get('Accept') || '';
-    if (!acceptHeader.includes('text/event-stream')) {
-      return new Response('SSE endpoint - set Accept: text/event-stream', {
-        status: 400,
         headers: {
           'Content-Type': 'text/plain',
         }
@@ -67,96 +56,84 @@ export default {
       return new Response(null, { status: 204, headers });
     }
 
-    // Create MCP server instance
-    const mcpServer = new MCPServer(env);
+    // For POST requests with SSE, read the body first
+    if (request.method === 'POST') {
+      try {
+        const body = await request.text();
+        
+        // Create MCP server instance
+        const mcpServer = new MCPServer(env);
+        
+        // Parse the request
+        const mcpRequest: MCPRequest = JSON.parse(body);
+        
+        // Check section-specific rate limit if applicable
+        if (mcpRequest.method === 'tools/call' && 
+            mcpRequest.params?.name === 'fetch_ed_code' &&
+            mcpRequest.params?.arguments?.section) {
+          const sectionLimit = await rateLimiter.checkLimit(
+            ip, 
+            mcpRequest.params.arguments.section
+          );
+          
+          if (!sectionLimit.allowed) {
+            const errorResponse = {
+              jsonrpc: '2.0' as const,
+              id: mcpRequest.id,
+              error: {
+                code: -32000,
+                message: 'Rate limit exceeded for this section'
+              }
+            };
+            
+            return new Response(MCPServer.formatSSE(errorResponse), { headers });
+          }
+        }
+        
+        // Handle the request
+        const response = await mcpServer.handleRequest(mcpRequest);
+        
+        // Return SSE response
+        return new Response(MCPServer.formatSSE(response), { headers });
+        
+      } catch (error) {
+        console.error('Request processing error:', error);
+        const errorResponse = {
+          jsonrpc: '2.0' as const,
+          id: 'error',
+          error: {
+            code: -32700,
+            message: 'Parse error'
+          }
+        };
+        return new Response(MCPServer.formatSSE(errorResponse), { headers });
+      }
+    }
 
-    // Create readable stream for SSE
+    // For GET requests or establishing SSE connection
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
     const encoder = new TextEncoder();
 
-    // Handle the SSE connection
+    // Handle the SSE connection for streaming
     ctx.waitUntil((async () => {
       try {
         // Send initial connection message
         await writer.write(encoder.encode(': ping\n\n'));
 
-        // Read request body as stream
-        const reader = request.body?.getReader();
-        if (!reader) {
-          await writer.close();
-          return;
-        }
-
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          
-          // Process complete lines
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.trim()) {
-              try {
-                // Parse JSON-RPC request
-                const mcpRequest: MCPRequest = JSON.parse(line);
-                
-                // Check section-specific rate limit if applicable
-                if (mcpRequest.method === 'tools/call' && 
-                    mcpRequest.params?.name === 'fetch_ed_code' &&
-                    mcpRequest.params?.arguments?.section) {
-                  const sectionLimit = await rateLimiter.checkLimit(
-                    ip, 
-                    mcpRequest.params.arguments.section
-                  );
-                  
-                  if (!sectionLimit.allowed) {
-                    const errorResponse = {
-                      jsonrpc: '2.0' as const,
-                      id: mcpRequest.id,
-                      error: {
-                        code: -32000,
-                        message: 'Rate limit exceeded for this section'
-                      }
-                    };
-                    await writer.write(
-                      encoder.encode(MCPServer.formatSSE(errorResponse))
-                    );
-                    continue;
-                  }
-                }
-
-                // Handle the request
-                const response = await mcpServer.handleRequest(mcpRequest);
-                
-                // Send SSE response
-                await writer.write(
-                  encoder.encode(MCPServer.formatSSE(response))
-                );
-              } catch (error) {
-                console.error('Request processing error:', error);
-                // Send error response
-                const errorResponse = {
-                  jsonrpc: '2.0' as const,
-                  id: 'error',
-                  error: {
-                    code: -32700,
-                    message: 'Parse error'
-                  }
-                };
-                await writer.write(
-                  encoder.encode(MCPServer.formatSSE(errorResponse))
-                );
-              }
+        // For GET requests, just keep the connection alive
+        if (request.method === 'GET') {
+          // Send periodic pings
+          const interval = setInterval(async () => {
+            try {
+              await writer.write(encoder.encode(': ping\n\n'));
+            } catch (e) {
+              clearInterval(interval);
             }
-          }
+          }, 30000); // Every 30 seconds
+
+          // Keep connection open
+          await new Promise(() => {}); // Never resolves
         }
       } catch (error) {
         console.error('SSE error:', error);
