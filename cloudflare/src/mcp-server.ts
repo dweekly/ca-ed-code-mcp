@@ -136,7 +136,8 @@ export class MCPServer {
                   type: 'text',
                   text: `Error: Could not find California Education Code section ${section}. Please verify the section number exists.`
                 }
-              ]
+              ],
+              isError: true
             }
           };
         }
@@ -159,6 +160,7 @@ export class MCPServer {
               text: result.content
             }
           ],
+          isError: false,
           // Additional structured metadata
           section: result.section,
           title: result.title,
